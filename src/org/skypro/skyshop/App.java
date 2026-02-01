@@ -1,15 +1,21 @@
 package org.skypro.skyshop;
 
 import org.skypro.skyshop.basket.ProductBasket;
+import org.skypro.skyshop.product.DiscountedProduct;
+import org.skypro.skyshop.product.FixPriceProduct;
 import org.skypro.skyshop.product.Product;
+import org.skypro.skyshop.product.SimpleProduct;
 
 public class App {
     public static void main(String[] args) {
-        Product apple = new Product("Яблоко", 95);
-        Product milk = new Product("Молоко", 115);
-        Product flour = new Product("Мука", 60);
-        Product sugar = new Product("Сахар", 80);
-        Product tea = new Product("Чай", 150);
+        SimpleProduct apple = new SimpleProduct("Яблоко", 95);
+        SimpleProduct milk = new SimpleProduct("Молоко", 115);
+        SimpleProduct flour = new SimpleProduct("Мука", 60);
+        SimpleProduct sugar = new SimpleProduct("Сахар", 80);
+
+        // Специальные товары
+        DiscountedProduct tea = new DiscountedProduct("Чай", 150, 20);
+        FixPriceProduct salt = new FixPriceProduct("Соль");
 
         ProductBasket basket = new ProductBasket();
 
@@ -19,20 +25,19 @@ public class App {
         basket.addProduct(flour);
         basket.addProduct(sugar);
         basket.addProduct(tea);
+        basket.addProduct(salt);
 
-        //Добавление продукта в заполненную корзину
+        //Добавляем повторно яблоко
         basket.addProduct(apple);
 
-        //Печать содержимого корзины с несколькими продуктами
+        //Печать содержимого корзины
         basket.printContents();
 
-        //Получение стоимости корзины с несколькими товарами
+        //Получение стоимости корзины
         System.out.println("Итоговая стоимость корзины: " + basket.getTotalCost());
 
-        //Поиск товара, который есть в корзине
+        //Поиск товара
         System.out.println("Яблоко есть ли в корзине? " + basket.isProductInBasket("Яблоко"));
-
-        //Поиск товара, которого нет в корзине
         System.out.println("Соль есть в корзине? " + basket.isProductInBasket("Соль"));
 
         //Очистка корзины
