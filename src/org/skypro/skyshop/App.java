@@ -52,7 +52,7 @@ public class App {
         System.out.println("Итоговая стоимость корзины: " + basket.getTotalCost());
 
         //Поиск товара
-        System.out.println("Яблоко есть ли в корзине? " + basket.isProductInBasket("Яблоко"));
+        System.out.println("\nЯблоко есть ли в корзине? " + basket.isProductInBasket("Яблоко"));
         System.out.println("Соль есть в корзине? " + basket.isProductInBasket("Соль"));
 
         System.out.println("\nТестирование поискового движка");
