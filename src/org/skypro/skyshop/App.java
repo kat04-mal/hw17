@@ -7,86 +7,130 @@ import java.util.Arrays;
 
 public class App {
     public static void main(String[] args) {
-        SimpleProduct apple = new SimpleProduct("Яблоко", 95);
-        SimpleProduct milk = new SimpleProduct("Молоко", 115);
-        SimpleProduct flour = new SimpleProduct("Мука", 60);
+        System.out.println("Демонстрация корректных данных");
+        try {
+            SimpleProduct apple = new SimpleProduct("Яблоко", 95);
+            SimpleProduct milk = new SimpleProduct("Молоко", 115);
+            DiscountedProduct tea = new DiscountedProduct("Чай", 150, 20);
+            FixPriceProduct salt = new FixPriceProduct("Соль");
+            Article appleArticle = new Article("Польза яблок", "Яблоки содержат витамины и полезны для здоровья");
+            Article milkArticle = new Article("О молоке", "Молоко - источник кальция и белка");
 
-        //Специальные товары
-        DiscountedProduct tea = new DiscountedProduct("Чай", 150, 20);
-        FixPriceProduct salt = new FixPriceProduct("Соль");
+            SearchEngine searchEngine = new SearchEngine(10);
 
-        //Создание статей
-        Article appleArticle = new Article("Польза яблок", "Яблоки содержат витамины и полезны для здоровья");
-        Article milkArticle = new Article("О молоке", "Молоко - источник кальция и белка");
-        Article cookingArticle = new Article("Кулинария", "Советы по приготовлению пищи с использованием муки и сахара");
+            searchEngine.add(apple);
+            searchEngine.add(milk);
+            searchEngine.add(tea);
+            searchEngine.add(salt);
+            searchEngine.add(appleArticle);
+            searchEngine.add(milkArticle);
 
-        SearchEngine searchEngine = new SearchEngine(10);
+            ProductBasket basket = new ProductBasket();
+            basket.addProduct(apple);
+            basket.addProduct(milk);
+            basket.addProduct(tea);
+            basket.addProduct(salt);
 
-        searchEngine.add(apple);
-        searchEngine.add(milk);
-        searchEngine.add(flour);
-        searchEngine.add(tea);
-        searchEngine.add(salt);
+            basket.printContents();
 
-        searchEngine.add(appleArticle);
-        searchEngine.add(milkArticle);
-        searchEngine.add(cookingArticle);
+            System.out.println("Поиск наиболее подходящего результата");
 
+            Searchable bestApple = searchEngine.findBestMatch("яблоко");
+            System.out.println("Наиболее подходящий результат для 'яблоко': " + bestApple.getStringRepresentation());
 
-        ProductBasket basket = new ProductBasket();
+            Searchable bestMilk = searchEngine.findBestMatch("молоко");
+            System.out.println("Наиболее подходящий результат для 'молоко': " + bestMilk.getStringRepresentation());
 
-        //Добавление продуктов в корзину
-        basket.addProduct(apple);
-        basket.addProduct(milk);
-        basket.addProduct(flour);
-        basket.addProduct(tea);
-        basket.addProduct(salt);
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+        System.out.println("Демонстрация обработки невалидных данных");
 
-        //Добавляем повторно яблоко
-        basket.addProduct(apple);
+        // Тестирование невалидного названия продукта
+        try {
+            SimpleProduct invalidProduct = new SimpleProduct("", 100);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        //Печать содержимого корзины
-        basket.printContents();
+        try {
+            SimpleProduct nullProduct = new SimpleProduct(null, 100);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        //Получение стоимости корзины
-        System.out.println("Итоговая стоимость корзины: " + basket.getTotalCost());
+        // Тестирование невалидной цены
+        try {
+            SimpleProduct zeroPrice = new SimpleProduct("Товар", 0);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        //Поиск товара
-        System.out.println("\nЯблоко есть ли в корзине? " + basket.isProductInBasket("Яблоко"));
-        System.out.println("Соль есть в корзине? " + basket.isProductInBasket("Соль"));
+        try {
+            SimpleProduct negativePrice = new SimpleProduct("Товар", -50);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        System.out.println("\nТестирование поискового движка");
+        // Тестирование невалидной скидки
+        try {
+            DiscountedProduct invalidDiscount = new DiscountedProduct("Чай", 100, -10);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        System.out.println("\nПоиск по слову 'яблоко'");
-        Searchable[] appleResult = searchEngine.search("Яблоко");
-        System.out.println("Результаты " + Arrays.toString(appleResult));
+        try {
+            DiscountedProduct highDiscount = new DiscountedProduct("Чай", 100, 150);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        System.out.println("\nПоиск по слову 'молоко'");
-        Searchable[] milkResult = searchEngine.search("Молоко");
-        System.out.println("Результаты " + Arrays.toString(milkResult));
+        // Тестирование невалидной базовой цены со скидкой
+        try {
+            DiscountedProduct invalidBasePrice = new DiscountedProduct("Чай", 0, 10);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        System.out.println("\nПоиск по слову 'польза'");
-        Searchable[] healthResult = searchEngine.search("Польза");
-        System.out.println("Результаты " + Arrays.toString(healthResult));
+        System.out.println("Демонстрация исключения при поиске");
+        try {
+            SearchEngine emptyEngine = new SearchEngine(5);
+            Searchable result = emptyEngine.findBestMatch("несуществующий запрос");
+        } catch (BestResultNotFound e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        System.out.println("\nПоиск по слову 'кулинария'");
-        Searchable[] cookingResult = searchEngine.search("Кулинария");
-        System.out.println("Результаты " + Arrays.toString(cookingResult));
+        // Демонстрация с частично заполненным движком
+        try {
+            SearchEngine partialEngine = new SearchEngine(5);
+            SimpleProduct product1 = new SimpleProduct("Тестовый товар", 100);
+            partialEngine.add(product1);
 
-        System.out.println("\nСтроковое представление объектов");
-        System.out.println("Товар: " + apple.getStringRepresentation());
-        System.out.println("Статья: " + appleArticle.getStringRepresentation());
+            // Запрос, который не найдет совпадений
+            Searchable result = partialEngine.findBestMatch("абсолютно другой текст");
+        } catch (BestResultNotFound e) {
+            System.out.println("Поймано исключение: " + e.getMessage());
+        }
 
-        //Очистка корзины
-        basket.clearBasket();
+        System.out.println("Тестирование алгоритма подсчета вхождений");
+        // Создаем специальные статьи для тестирования алгоритма
+        try {
+            SearchEngine testEngine = new SearchEngine(10);
 
-        //Печать содержимого пустой корзины
-        basket.printContents();
+            Article article1 = new Article("Тест", "helloabcdehellonnnnnnhello");
+            Article article2 = new Article("Тест2", "hellohellohello");
+            Article article3 = new Article("Тест3", "один раз hello");
 
-        //Получение стоимости пустой корзины
-        System.out.println("Итоговая стоимость после очистки корзины: " + basket.getTotalCost());
+            testEngine.add(article1);
+            testEngine.add(article2);
+            testEngine.add(article3);
 
-        //Поиск товара в пустой корзине
-        System.out.println("Яблоко есть в пустой корзине? " + basket.isProductInBasket("Яблоко"));
-    }
+            Searchable bestHello = testEngine.findBestMatch("hello");
+            System.out.println("Наиболее подходящий результат для 'hello': " + bestHello.getStringRepresentation());
+            System.out.println("Текст: " + bestHello.getSearchTerm());
+
+        } catch (BestResultNotFound e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+        }
 }
