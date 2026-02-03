@@ -57,21 +57,36 @@ public class App {
 
         System.out.println("\nТестирование поискового движка");
 
-        System.out.println("\nПоиск по слову 'яблоко'");
-        Searchable[] appleResult = searchEngine.search("Яблоко");
-        System.out.println("Результаты " + Arrays.toString(appleResult));
 
-        System.out.println("\nПоиск по слову 'молоко'");
-        Searchable[] milkResult = searchEngine.search("Молоко");
-        System.out.println("Результаты " + Arrays.toString(milkResult));
+        System.out.println("\nПоиск по слову 'яблоко':");
+        Searchable[] appleResults = searchEngine.search("яблоко");
+        System.out.println("Найдено результатов: " + appleResults.length);
+        for (Searchable result : appleResults) {
+            System.out.println("- " + result.getStringRepresentation());
+        }
 
-        System.out.println("\nПоиск по слову 'польза'");
-        Searchable[] healthResult = searchEngine.search("Польза");
-        System.out.println("Результаты " + Arrays.toString(healthResult));
+
+        System.out.println("\nПоиск по слову 'молоко':");
+        Searchable[] milkResults = searchEngine.search("молоко");
+        System.out.println("Найдено результатов: " + milkResults.length);
+        for (Searchable result : milkResults) {
+            System.out.println("- " + result.getStringRepresentation());
+        }
+
+
+        System.out.println("\nПоиск по слову 'польза':");
+        Searchable[] healthResults = searchEngine.search("польза");
+        System.out.println("Найдено результатов: " + healthResults.length);
+        for (Searchable result : healthResults) {
+            System.out.println("- " + result.getStringRepresentation());
+        }
 
         System.out.println("\nПоиск по слову 'кулинария'");
-        Searchable[] cookingResult = searchEngine.search("Кулинария");
-        System.out.println("Результаты " + Arrays.toString(cookingResult));
+        Searchable[] cookingResults = searchEngine.search("Кулинария");
+        System.out.println("Найдено результатов: " + cookingResults.length);
+        for (Searchable result : cookingResults) {
+            System.out.println("- " + result.getStringRepresentation());
+        }
 
         System.out.println("\nСтроковое представление объектов");
         System.out.println("Товар: " + apple.getStringRepresentation());
