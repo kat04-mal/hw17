@@ -1,8 +1,6 @@
 package org.skypro.skyshop;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class SearchEngine {
     private List<Searchable> searchables = new LinkedList<>();
@@ -15,30 +13,27 @@ public class SearchEngine {
         searchables.add(searchable);
     }
 
-    public List<Searchable> search(String query) {
-        // Используем список для динамического хранения результатов
-        List<Searchable> resultList = new LinkedList<>();
+    public Map<String, Searchable> search(String query){
+        Map<String, Searchable> result = new TreeMap<>();
+        String lowerQuery = query.toLowerCase();
 
         for (Searchable item : searchables) {
-            if (item != null && item.getSearchTerm().toLowerCase().contains(query.toLowerCase())) {
-                resultList.add(item);
+            if (item != null &&
+                    item.getSearchTerm().toLowerCase().contains(lowerQuery)) {
+                result.put(item.getName(), item);
             }
         }
-
-        return resultList;
+        return result;
     }
 
     public Searchable findBestMatch(String search) throws BestResultNotFound {
         Searchable bestMatch = null;
         int maxOccurrences = -1;
+        String lowerSearch = search.toLowerCase();
 
         for (Searchable item : searchables) {
             if (item != null) {
-                String searchTerm = item.getSearchTerm().toLowerCase();
-                String searchLower = search.toLowerCase();
-
-                int occurrences = countOccurrences(searchTerm, searchLower);
-
+                int occurrences = countOccurrences(item.getSearchTerm().toLowerCase(), lowerSearch);
                 if (occurrences > maxOccurrences) {
                     maxOccurrences = occurrences;
                     bestMatch = item;
@@ -49,21 +44,16 @@ public class SearchEngine {
         if (bestMatch == null || maxOccurrences == 0) {
             throw new BestResultNotFound(search);
         }
-
         return bestMatch;
     }
 
     private int countOccurrences(String text, String substring) {
         int count = 0;
-        int index = 0;
-        int substringIndex = text.indexOf(substring, index);
-
-        while (substringIndex != -1) {
+        int idx = 0;
+        while ((idx = text.indexOf(substring, idx)) != -1) {
             count++;
-            index = substringIndex + substring.length();
-            substringIndex = text.indexOf(substring, index);
+            idx += substring.length();
         }
-
         return count;
     }
 }

@@ -2,21 +2,21 @@ package org.skypro.skyshop.basket;
 
 import org.skypro.skyshop.product.Product;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ProductBasket {
-   private List <Product> products = new LinkedList<>();
+   private final Map<String, List <Product>>  products = new HashMap<>();
 
    public void addProduct(Product product){
-       products.add(product);
+       products.computeIfAbsent(product.getName(), k -> new LinkedList<>()).add(product);
    }
 
    public int getTotalCost(){
        int total = 0;
-       for(Product product : products){
-           total += product.getPrice();
+       for(List<Product> list : products.values()){
+           for(Product p : list){
+               total += p.getPrice();
+           }
        }
        return total;
    }
@@ -29,10 +29,12 @@ public class ProductBasket {
 
        int specialCount = 0;
 
-       for(Product product : products){
-           System.out.println(product.toString());
-           if(product.isSpecial()){
-               specialCount++;
+       for(String name : new TreeSet<>(products.keySet())){
+           for (Product product : products.get(name)){
+               System.out.println(product);
+               if(product.isSpecial()){
+                   specialCount++;
+               }
            }
        }
 
@@ -41,12 +43,7 @@ public class ProductBasket {
    }
 
     public boolean isProductInBasket(String name){
-       for(Product product : products){
-           if(product.getName().equals(name)){
-               return true;
-           }
-       }
-       return false;
+       return products.containsKey(name);
     }
 
     public void clearBasket(){
@@ -54,16 +51,7 @@ public class ProductBasket {
     }
 
     public List<Product> removeProductsByName(String name){
-       List<Product> removeProducts = new LinkedList<>();
-
-        Iterator<Product> iterator = products.iterator();
-        while (iterator.hasNext()){
-            Product product = iterator.next();
-            if(product.getName().equals(name)){
-                removeProducts.add(product);
-                iterator.remove();
-            }
-        }
-        return removeProducts;
+       List<Product> removed = products.remove(name);
+       return removed != null ? removed : Collections.emptyList();
     }
 }

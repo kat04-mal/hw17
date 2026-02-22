@@ -4,6 +4,7 @@ import org.skypro.skyshop.basket.ProductBasket;
 import org.skypro.skyshop.product.*;
 
 import java.util.List;
+import java.util.Map;
 
 public class App {
     public static void main(String[] args) {
@@ -66,11 +67,12 @@ public class App {
 
             // Демонстрация нового поиска, возращающего все результаты
             System.out.println("\nДемонстрация нового поиска (все результаты): ");
-            List<Searchable> searchResults = searchEngine.search("яблоко");
+            Map<String, Searchable> searchResults = searchEngine.search("яблоко");
             System.out.println("Найдено результатов: " + searchResults.size());
-            for (Searchable result : searchResults){
-                System.out.println(result.getStringRepresentation());
+            for (Searchable result : searchResults.values()) {
+                System.out.println(result.getName() + " — " + result.getContentType());
             }
+
 
         } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
