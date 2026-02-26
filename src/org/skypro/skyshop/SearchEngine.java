@@ -3,29 +3,37 @@ package org.skypro.skyshop;
 import java.util.*;
 
 public class SearchEngine {
-    private List<Searchable> searchables = new LinkedList<>();
+    private Set<Searchable> searchables = new HashSet<>();
 
     public SearchEngine(int capacity) {
-        // capacity теперь игнорируется, так как список динамический
+        // capacity теперь игнорируется
     }
 
     public void add(Searchable searchable) {
         searchables.add(searchable);
     }
 
-    public Map<String, Searchable> search(String query){
-        Map<String, Searchable> result = new TreeMap<>();
+    // Компаратор
+    private static final Comparator<Searchable> searchableComparator =
+            Comparator.comparingInt((Searchable s) -> s.getName().length())
+                    .reversed()
+                    .thenComparing(Searchable::getName);
+
+    // Поиск всех совпадений
+    public TreeSet<Searchable> search(String query){
+        TreeSet<Searchable> result = new TreeSet<>(searchableComparator);
         String lowerQuery = query.toLowerCase();
 
         for (Searchable item : searchables) {
             if (item != null &&
                     item.getSearchTerm().toLowerCase().contains(lowerQuery)) {
-                result.put(item.getName(), item);
+                result.add(item);
             }
         }
         return result;
     }
 
+    // Стандартный поиск лучшего совпадения (без изменений)
     public Searchable findBestMatch(String search) throws BestResultNotFound {
         Searchable bestMatch = null;
         int maxOccurrences = -1;
@@ -57,3 +65,4 @@ public class SearchEngine {
         return count;
     }
 }
+
