@@ -1,6 +1,7 @@
 package org.skypro.skyshop;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SearchEngine {
     private Set<Searchable> searchables = new HashSet<>();
@@ -21,16 +22,13 @@ public class SearchEngine {
 
     // Поиск всех совпадений
     public TreeSet<Searchable> search(String query){
-        TreeSet<Searchable> result = new TreeSet<>(searchableComparator);
         String lowerQuery = query.toLowerCase();
 
-        for (Searchable item : searchables) {
-            if (item != null &&
-                    item.getSearchTerm().toLowerCase().contains(lowerQuery)) {
-                result.add(item);
-            }
-        }
-        return result;
+        // Весь поиск теперь реализован через Stream
+        return searchables.stream()
+                .filter(item -> item != null &&
+                        item.getSearchTerm().toLowerCase().contains(lowerQuery))
+                .collect(Collectors.toCollection(() -> new TreeSet<>(searchableComparator)));
     }
 
     // Стандартный поиск лучшего совпадения (без изменений)

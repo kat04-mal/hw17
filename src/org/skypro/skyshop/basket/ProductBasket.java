@@ -11,36 +11,38 @@ public class ProductBasket {
        products.computeIfAbsent(product.getName(), k -> new LinkedList<>()).add(product);
    }
 
-   public int getTotalCost(){
-       int total = 0;
-       for(List<Product> list : products.values()){
-           for(Product p : list){
-               total += p.getPrice();
-           }
-       }
-       return total;
-   }
+    public int getTotalCost(){
+        return products.values().stream()
+                .flatMap(Collection::stream)          // плоский поток всех продуктов
+                .mapToInt(Product::getPrice)          // извлекаем цену
+                .sum();                               // сумма всех цен
+    }
 
-   public void printContents(){
-       if(products.isEmpty()){
-           System.out.println("В корзине пусто!");
-           return;
-       }
+    private long getSpecialCount(){
+        return products.values().stream()
+                .flatMap(Collection::stream)
+                .filter(Product::isSpecial)            // только специальные товары
+                .count();                             // количество
+    }
 
-       int specialCount = 0;
+    public void printContents(){
+        if(products.isEmpty()){
+            System.out.println("В корзине пусто!");
+            return;
+        }
 
-       for(String name : new TreeSet<>(products.keySet())){
-           for (Product product : products.get(name)){
-               System.out.println(product);
-               if(product.isSpecial()){
-                   specialCount++;
-               }
-           }
-       }
+        // Печатаем товары, отсортированные по имени (как TreeSet)
+        products.keySet().stream()
+                .sorted(Comparator.naturalOrder())
+                .forEach(name -> {
+                    products.get(name).stream()
+                            .forEach(product -> System.out.println(product));
+                });
 
-       System.out.println("Итого: " + getTotalCost());
-       System.out.println("Специальных товаров: " + specialCount);
-   }
+        System.out.println("Итого: " + getTotalCost());
+        System.out.println("Специальных товаров: " + getSpecialCount());
+    }
+
 
     public boolean isProductInBasket(String name){
        return products.containsKey(name);
